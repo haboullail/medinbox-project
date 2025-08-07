@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Medinbox
+      dockerfile: Dockerfile
+    ports:
+      - "7016:8082"
+    container_name: medinbox-backend
+    networks:
+      - medinbox-network
+
+  frontend:
+    build:
+      context: ./Medinbox-Front/medinbox-app
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    container_name: medinbox-frontend
+    networks:
+      - medinbox-network
+    volumes:
+      - ./Medinbox-Front/medinbox-app:/app
+      - /app/node_modules
+    command: npm run start
+
+  websocket:
+    build:
+      context: ./medinbox-realtime
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    container_name: websocket-server
+    networks:
+      - medinbox-network
+
+networks:
+  medinbox-network:
+    driver: bridge
