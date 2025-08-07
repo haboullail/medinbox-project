@@ -154,9 +154,6 @@ namespace Medinbox.WebAPI.Controllers
             if (!await HasPermissionAsync("Write"))
                 return Forbid();
 
-            
-
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ApiResponse<string>
@@ -169,7 +166,6 @@ namespace Medinbox.WebAPI.Controllers
 
             try
             {
-
                 var exists = await _service.ExistsByNameAsync(request.Name);
                 if (exists)
                 {
