@@ -66,5 +66,10 @@ namespace Medinbox.Infrastructure.Repositories
             };
         }
 
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _context.Equipments.AnyAsync(e => e.Name == name);
+        }
+
     }
 }

@@ -27,5 +27,12 @@ namespace Medinbox.Application.Interfaces
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A paged result containing a list of equipment and pagination metadata.</returns>
         Task<PagedResult<EquipmentResponse>> GetPagedAsync(int page, int pageSize);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        Task<bool> ExistsByNameAsync(string name);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Medinbox.Application.Constants;
 using Medinbox.Application.DTOs;
 using Medinbox.Application.Interfaces;
+using Medinbox.Infrastructure.Repositories;
 using Medinbox.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -151,7 +152,9 @@ namespace Medinbox.WebAPI.Controllers
         public async Task<IActionResult> Add([FromBody] AddEquipmentRequest request)
         {
             if (!await HasPermissionAsync("Write"))
-                return Forbid(); 
+                return Forbid();
+
+            
 
 
             if (!ModelState.IsValid)
@@ -166,6 +169,13 @@ namespace Medinbox.WebAPI.Controllers
 
             try
             {
+
+                var exists = await _service.ExistsByNameAsync(request.Name);
+                if (exists)
+                {
+                    throw new InvalidOperationException("The equipment already exists.");
+                }
+
                 var createdEquipment = await _service.AddAsync(request);
 
                 // Send WebSocket notification
@@ -184,7 +194,7 @@ namespace Medinbox.WebAPI.Controllers
                     var response = await client.PostAsync(url, content);
                     response.EnsureSuccessStatusCode();
                 }
-                catch (Exception wsEx)
+                catch (Exception wsEx)  
                 {
                     _logger.LogError(wsEx, "WebSocket notification failed for equipment {Id}", createdEquipment.Id);
                 }
@@ -197,10 +207,19 @@ namespace Medinbox.WebAPI.Controllers
                 });
 
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Validation or business rule error.");
+                return BadRequest(new ApiResponse<string>
+                {
+                    ResultCode = 1,
+                    Message = ex.Message,
+                    Data = null
+                });
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while adding equipment.");
-
+                _logger.LogError(ex, "Unexpected error while adding equipment.");
                 return StatusCode(500, new ApiResponse<string>
                 {
                     ResultCode = 1,

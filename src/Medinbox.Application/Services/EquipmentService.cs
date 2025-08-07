@@ -77,6 +77,10 @@ namespace Medinbox.Application.Services
             };
         }
 
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _repository.ExistsByNameAsync(name);
+        }
 
     }
 }

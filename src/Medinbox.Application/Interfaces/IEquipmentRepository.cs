@@ -15,5 +15,6 @@ namespace Medinbox.Application.Interfaces
         Task AddAsync(Equipment equipment);
 
         Task<PagedResult<Equipment>> GetPagedAsync(int page, int pageSize);
+        Task<bool> ExistsByNameAsync(string name);
     }
 }

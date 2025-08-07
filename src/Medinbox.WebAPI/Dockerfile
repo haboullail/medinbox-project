@@ -1,10 +1,7 @@
-# ----------- STAGE 1: Build the application -------------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-# Set working directory inside the container
 WORKDIR /src
 
-# Copy csproj files individually to leverage Docker cache during restore
 COPY ["src/Medinbox.WebAPI/Medinbox.WebAPI.csproj", "Medinbox.WebAPI/"]
 COPY ["src/Medinbox.Application/Medinbox.Application.csproj", "Medinbox.Application/"]
 COPY ["src/Medinbox.Domain/Medinbox.Domain.csproj", "Medinbox.Domain/"]
